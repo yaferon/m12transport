@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Google Maps API Test</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    input { width: 100%; padding: 0.5rem; font-size: 1rem; }
+  </style>
+
+  <!-- ✅ Vervang hier met je eigen API key -->
+  <script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE&libraries=places">
+  </script>
+</head>
+<body>
+  <h1>🔍 Test Google Maps Autocomplete</h1>
+  <p>Typ een adres hieronder. Als je API key werkt, zie je suggesties verschijnen.</p>
+
+  <input id="autocomplete" type="text" placeholder="Typ een adres…" />
+
+  <script>
+    function initAutocomplete() {
+      const input = document.getElementById("autocomplete");
+      new google.maps.places.Autocomplete(input);
+    }
+
+    // Wacht tot Maps geladen is
+    window.initAutocomplete = initAutocomplete;
+  </script>
+
+  <!-- ✅ Trigger de init functie zodra Maps geladen is -->
+  <script>
+    // Poll tot Google geladen is
+    const checkGoogle = setInterval(() => {
+      if (window.google && google.maps && google.maps.places) {
+        clearInterval(checkGoogle);
+        initAutocomplete();
+      }
+    }, 100);
+  </script>
+</body>
+</html>
