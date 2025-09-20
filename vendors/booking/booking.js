@@ -73,7 +73,7 @@ function initBookingForm() {
     };
 
     // ✅ Verstuur bevestiging direct
-    emailjs.send("service_m12transport", "rit_bevestiging", templateParams)
+    emailjs.send("service_6wydmsm", "template_pkf6uuc", templateParams)
       .then(() => console.log("✅ Bevestiging verstuurd"))
       .catch((err) => console.error("❌ Fout bij bevestiging:", err));
 
@@ -84,7 +84,7 @@ function initBookingForm() {
 
     if (msUntilReminder > 0) {
       setTimeout(() => {
-        emailjs.send("service_m12transport", "rit_herinnering", templateParams)
+        emailjs.send("service_6wydmsm", "template_pkf6uuc", templateParams)
           .then(() => console.log("📩 Herinnering verstuurd"))
           .catch((err) => console.error("❌ Fout bij herinnering:", err));
       }, msUntilReminder);
