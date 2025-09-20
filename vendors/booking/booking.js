@@ -65,14 +65,17 @@ function initBookingForm() {
       return;
     }
 
-    const templateParams = {
-  name: name,
-  pickup: pickup.value,
-  delivery: delivery.value,
-  vehicle: vehicle.value,
-  datetime: datetime.value,
-  email: email.value
+   const templateParams = {
+  name: document.getElementById("name").value,
+  pickup: document.getElementById("pickup").value,
+  delivery: document.getElementById("delivery").value,
+  vehicle: document.getElementById("vehicle").value,
+  datetime: document.getElementById("datetime").value,
+  email: document.getElementById("email").value,
+  notes: document.getElementById("notes").value
 };
+
+
 
 
     // ✅ Verstuur bevestiging direct
