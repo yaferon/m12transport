@@ -42,6 +42,7 @@ function berekenPrijs() {
 }
 
 function initBookingForm() {
+  const name = document.getElementById("name").value;
   const pickup = document.getElementById("pickup");
   const delivery = document.getElementById("delivery");
   const vehicle = document.getElementById("vehicle");
@@ -65,12 +66,14 @@ function initBookingForm() {
     }
 
     const templateParams = {
-      pickup: pickup.value,
-      delivery: delivery.value,
-      vehicle: vehicle.value,
-      datetime: datetime.value,
-      email: email.value
-    };
+  name: name,
+  pickup: pickup.value,
+  delivery: delivery.value,
+  vehicle: vehicle.value,
+  datetime: datetime.value,
+  email: email.value
+};
+
 
     // ✅ Verstuur bevestiging direct
     emailjs.send("service_6wydmsm", "template_pkf6uuc", templateParams)
