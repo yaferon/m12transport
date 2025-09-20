@@ -42,65 +42,52 @@ function berekenPrijs() {
 }
 
 function initBookingForm() {
-  const name = document.getElementById("name").value;
-  const pickup = document.getElementById("pickup");
-  const delivery = document.getElementById("delivery");
-  const vehicle = document.getElementById("vehicle");
-  const datetime = document.getElementById("datetime");
-  const email = document.getElementById("email");
   const form = document.getElementById("bookingForm");
 
-  new google.maps.places.Autocomplete(pickup);
-  new google.maps.places.Autocomplete(delivery);
-
-  pickup.addEventListener("blur", berekenPrijs);
-  delivery.addEventListener("blur", berekenPrijs);
-  vehicle.addEventListener("change", berekenPrijs);
-
   form.addEventListener("submit", function(e) {
-    e.preventDefault();
+    e.preventDefault(); // ✅ voorkomt herladen of GitHub Pages trigger
 
-    if (!pickup.value || !delivery.value || !vehicle.value || !datetime.value || !email.value) {
-      alert("Vul alle velden in.");
+    // Haal alle formulierwaarden op
+    const name = document.getElementById("name").value;
+    const pickup = document.getElementById("pickup").value;
+    const delivery = document.getElementById("delivery").value;
+    const vehicle = document.getElementById("vehicle").value;
+    const datetime = document.getElementById("datetime").value;
+    const email = document.getElementById("email").value;
+    const notes = document.getElementById("notes").value;
+
+    // Validatie (optioneel, maar handig)
+    if (!name || !pickup || !delivery || !vehicle || !datetime || !email) {
+      alert("Vul alle verplichte velden in.");
       return;
     }
 
-   const templateParams = {
-  name: document.getElementById("name").value,
-  pickup: document.getElementById("pickup").value,
-  delivery: document.getElementById("delivery").value,
-  vehicle: document.getElementById("vehicle").value,
-  datetime: document.getElementById("datetime").value,
-  email: document.getElementById("email").value,
-  notes: document.getElementById("notes").value
-};
+    // Bouw templateParams voor EmailJS
+    const templateParams = {
+      name: name,
+      pickup: pickup,
+      delivery: delivery,
+      vehicle: vehicle,
+      datetime: datetime,
+      email: email,
+      notes: notes
+    };
 
-
-
-
-    // ✅ Verstuur bevestiging direct
-    emailjs.send("service_6wydmsm", "template_pkf6uuc", templateParams)
-      .then(() => console.log("✅ Bevestiging verstuurd"))
-      .catch((err) => console.error("❌ Fout bij bevestiging:", err));
-
-    // ✅ Herinnering 1 uur vóór rit
-    const pickupTime = new Date(datetime.value);
-    const now = new Date();
-    const msUntilReminder = pickupTime - now - (60 * 60 * 1000); // 1 uur
-
-    if (msUntilReminder > 0) {
-      setTimeout(() => {
-        emailjs.send("service_6wydmsm", "template_pkf6uuc", templateParams)
-          .then(() => console.log("📩 Herinnering verstuurd"))
-          .catch((err) => console.error("❌ Fout bij herinnering:", err));
-      }, msUntilReminder);
-    }
-
-    alert("✅ Aanvraag verstuurd!");
-    form.reset();
-    document.getElementById("priceEstimate").textContent = "€0,00";
-    window.location.href = "bevestiging.html";
+    // Verstuur via EmailJS
+    emailjs.send("service_m12transport", "rit_bevestiging", templateParams)
+      .then(() => {
+        console.log("✅ Bevestiging verstuurd");
+        alert("✅ Je aanvraag is verstuurd!");
+        form.reset();
+        document.getElementById("priceEstimate").textContent = "€0,00";
+        window.location.href = "bevestiging.html"; // optioneel
+      })
+      .catch((err) => {
+        console.error("❌ Fout bij versturen:", err);
+        alert("Er ging iets mis bij het versturen. Probeer het opnieuw.");
+      });
   });
 }
 
 document.addEventListener("DOMContentLoaded", initBookingForm);
+
