@@ -1,8 +1,7 @@
-// Tarieven per voertuigtype
 const prijsPerKm = {
-  auto: 0.60,
-  bestelauto: 0.80,
-  bus: 1.20
+  auto: 0.50,
+  bestelauto: 0.75,
+  bus: 1.00
 };
 
 const startTarief = 25;
@@ -24,7 +23,6 @@ function berekenPrijs() {
     unitSystem: google.maps.UnitSystem.METRIC,
   }, function(response, status) {
     if (status !== "OK") {
-      console.error("DistanceMatrix error:", status);
       document.getElementById("priceEstimate").textContent = "Prijsberekening mislukt";
       return;
     }
@@ -37,46 +35,64 @@ function berekenPrijs() {
 
     const afstandKm = afstandMeters / 1000;
     const kmPrijs = afstandKm * prijsPerKm[voertuig];
-    const totaalZonderToeslag = startTarief + kmPrijs;
-    const totaalMetToeslag = totaalZonderToeslag * spoedToeslag;
+    const totaal = (startTarief + kmPrijs) * spoedToeslag;
 
-    document.getElementById("priceEstimate").textContent = `€${totaalMetToeslag.toFixed(2)}`;
+    document.getElementById("priceEstimate").textContent = `€${totaal.toFixed(2)}`;
   });
 }
 
 function initBookingForm() {
-  const form = document.getElementById("bookingForm");
   const pickup = document.getElementById("pickup");
   const delivery = document.getElementById("delivery");
   const vehicle = document.getElementById("vehicle");
+  const datetime = document.getElementById("datetime");
+  const email = document.getElementById("email");
+  const form = document.getElementById("bookingForm");
 
-  // Autocomplete toevoegen aan adresvelden
-  const autocompletePickup = new google.maps.places.Autocomplete(pickup);
-  const autocompleteDelivery = new google.maps.places.Autocomplete(delivery);
+  new google.maps.places.Autocomplete(pickup);
+  new google.maps.places.Autocomplete(delivery);
 
-  // Bereken prijs bij invoer
   pickup.addEventListener("blur", berekenPrijs);
   delivery.addEventListener("blur", berekenPrijs);
   vehicle.addEventListener("change", berekenPrijs);
 
-  // Verwerking bij verzenden
   form.addEventListener("submit", function(e) {
     e.preventDefault();
 
-    const pickupVal = pickup.value;
-    const deliveryVal = delivery.value;
-    const vehicleVal = vehicle.value;
-
-    if (!pickupVal || !deliveryVal || !vehicleVal) {
-      alert("Vul alle verplichte velden in.");
+    if (!pickup.value || !delivery.value || !vehicle.value || !datetime.value || !email.value) {
+      alert("Vul alle velden in.");
       return;
     }
 
-    alert("✅ Bedankt! Je aanvraag is ontvangen.");
+    const templateParams = {
+      pickup: pickup.value,
+      delivery: delivery.value,
+      vehicle: vehicle.value,
+      datetime: datetime.value,
+      email: email.value
+    };
+
+    // ✅ Verstuur bevestiging direct
+    emailjs.send("service_m12transport", "rit_bevestiging", templateParams)
+      .then(() => console.log("✅ Bevestiging verstuurd"))
+      .catch((err) => console.error("❌ Fout bij bevestiging:", err));
+
+    // ✅ Herinnering 1 uur vóór rit
+    const pickupTime = new Date(datetime.value);
+    const now = new Date();
+    const msUntilReminder = pickupTime - now - (60 * 60 * 1000); // 1 uur
+
+    if (msUntilReminder > 0) {
+      setTimeout(() => {
+        emailjs.send("service_m12transport", "rit_herinnering", templateParams)
+          .then(() => console.log("📩 Herinnering verstuurd"))
+          .catch((err) => console.error("❌ Fout bij herinnering:", err));
+      }, msUntilReminder);
+    }
+
+    alert("✅ Aanvraag verstuurd!");
     form.reset();
     document.getElementById("priceEstimate").textContent = "€0,00";
-
-    // Doorsturen naar bevestigingspagina
     window.location.href = "bevestiging.html";
   });
 }
