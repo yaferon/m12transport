@@ -1,53 +1,51 @@
-const prijsPerKm = {
-  auto: 0.50,
-  bestelauto: 0.75,
-  bus: 1.00
-};
+// Activeer Google Maps Autocomplete
+function initAutocomplete() {
+  const pickupInput = document.getElementById("pickup");
+  const deliveryInput = document.getElementById("delivery");
 
-const startTarief = 25;
-const spoedToeslag = 1.25;
-
-function berekenPrijs() {
-  const pickup = document.getElementById("pickup").value;
-  const delivery = document.getElementById("delivery").value;
-  const voertuig = document.getElementById("vehicle").value;
-
-  if (!pickup || !delivery || !voertuig) return;
-
-  const service = new google.maps.DistanceMatrixService();
-
-  service.getDistanceMatrix({
-    origins: [pickup],
-    destinations: [delivery],
-    travelMode: google.maps.TravelMode.DRIVING,
-    unitSystem: google.maps.UnitSystem.METRIC,
-  }, function(response, status) {
-    if (status !== "OK") {
-      document.getElementById("priceEstimate").textContent = "Prijsberekening mislukt";
-      return;
-    }
-
-    const afstandMeters = response.rows[0].elements[0].distance?.value;
-    if (!afstandMeters) {
-      document.getElementById("priceEstimate").textContent = "Geen afstand gevonden";
-      return;
-    }
-
-    const afstandKm = afstandMeters / 1000;
-    const kmPrijs = afstandKm * prijsPerKm[voertuig];
-    const totaal = (startTarief + kmPrijs) * spoedToeslag;
-
-    document.getElementById("priceEstimate").textContent = `€${totaal.toFixed(2)}`;
-  });
+  if (pickupInput && deliveryInput && window.google && google.maps.places) {
+    new google.maps.places.Autocomplete(pickupInput);
+    new google.maps.places.Autocomplete(deliveryInput);
+  } else {
+    console.warn("Google Maps Autocomplete is niet beschikbaar.");
+  }
 }
 
+// Bereken prijs op basis van afstand en voertuigtype
+async function calculatePrice() {
+  const pickup = document.getElementById("pickup").value;
+  const delivery = document.getElementById("delivery").value;
+  const vehicle = document.getElementById("vehicle").value;
+
+  if (!pickup || !delivery || !vehicle) return;
+
+  try {
+    const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${encodeURIComponent(pickup)}&destinations=${encodeURIComponent(delivery)}&key=JOUW_API_KEY`);
+    const data = await response.json();
+
+    const meters = data.rows[0].elements[0].distance.value;
+    const km = meters / 1000;
+
+    let rate = 0;
+    if (vehicle === "auto") rate = 0.75;
+    if (vehicle === "bestelauto") rate = 1.10;
+    if (vehicle === "bus") rate = 1.50;
+
+    const price = Math.round(km * rate * 100) / 100;
+    document.getElementById("priceEstimate").textContent = `€${price.toFixed(2)}`;
+  } catch (err) {
+    console.error("❌ Fout bij prijsberekening:", err);
+    document.getElementById("priceEstimate").textContent = "€0,00";
+  }
+}
+
+// Verwerk formulier en verstuur via EmailJS
 function initBookingForm() {
   const form = document.getElementById("bookingForm");
 
-  form.addEventListener("submit", function(e) {
-    e.preventDefault(); // ✅ voorkomt herladen of GitHub Pages trigger
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    // Haal alle formulierwaarden op
     const name = document.getElementById("name").value;
     const pickup = document.getElementById("pickup").value;
     const delivery = document.getElementById("delivery").value;
@@ -56,38 +54,42 @@ function initBookingForm() {
     const email = document.getElementById("email").value;
     const notes = document.getElementById("notes").value;
 
-    // Validatie (optioneel, maar handig)
     if (!name || !pickup || !delivery || !vehicle || !datetime || !email) {
       alert("Vul alle verplichte velden in.");
       return;
     }
 
-    // Bouw templateParams voor EmailJS
     const templateParams = {
-      name: name,
-      pickup: pickup,
-      delivery: delivery,
-      vehicle: vehicle,
-      datetime: datetime,
-      email: email,
-      notes: notes
+      name,
+      pickup,
+      delivery,
+      vehicle,
+      datetime,
+      email,
+      notes
     };
 
-    // Verstuur via EmailJS
-    emailjs.send("service_m12transport", "rit_bevestiging", templateParams)
-      .then(() => {
-        console.log("✅ Bevestiging verstuurd");
-        alert("✅ Je aanvraag is verstuurd!");
-        form.reset();
-        document.getElementById("priceEstimate").textContent = "€0,00";
-        window.location.href = "bevestiging.html"; // optioneel
-      })
-      .catch((err) => {
-        console.error("❌ Fout bij versturen:", err);
-        alert("Er ging iets mis bij het versturen. Probeer het opnieuw.");
-      });
+    try {
+      await emailjs.send("service_6wydmsm", "template_4k6zi6a", templateParams);
+      console.log("✅ Bevestiging verstuurd");
+      alert("✅ Je aanvraag is verstuurd!");
+      form.reset();
+      document.getElementById("priceEstimate").textContent = "€0,00";
+      window.location.href = "bevestiging.html"; // optioneel
+    } catch (err) {
+      console.error("❌ Fout bij versturen:", err);
+      alert("Er ging iets mis bij het versturen. Probeer het opnieuw.");
+    }
+  });
+
+  // Trigger prijsberekening bij input
+  ["pickup", "delivery", "vehicle"].forEach(id => {
+    document.getElementById(id).addEventListener("change", calculatePrice);
   });
 }
 
-document.addEventListener("DOMContentLoaded", initBookingForm);
-
+// Init alles zodra DOM geladen is
+document.addEventListener("DOMContentLoaded", () => {
+  initBookingForm();
+  initAutocomplete();
+});
