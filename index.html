@@ -29,15 +29,22 @@
     <!--    Stylesheets-->
     <!-- ===============================================-->
     <link href="assets/css/theme.css" rel="stylesheet" />
-<script async
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE&libraries=places">
-</script>
-      <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-  (function(){
-    emailjs.init("AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE"); // vervang met je echte public key
-  })();
-</script>
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      emailjs.init("AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE"); // 🔑 Vervang met je echte public key
+    });
+  </script>
+
+  <!-- Google Maps API -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE&libraries=places"
+    async
+    defer
+  ></script>
+
+  <!-- booking.js -->
+  <script src="vendors/booking/booking.js" defer></script>
 
 
 
@@ -83,51 +90,57 @@
         <img class="pt-7 pt-md-0 w-100" src="assets/img/illustrations/hero.png" alt="hero-header" />
       </div>
       <div class="col-12 col-md-7 col-xl-6 col-xxl-5 text-md-start text-center py-8">
-        <form id="bookingForm" class="text-start bg-light p-4 rounded shadow-sm">
-          <h4 class="mb-3">Boek direct jouw zending</h4>
-          <div class="mb-3">
-            <label for="pickup" class="form-label">Ophaaladres</label>
-            <input type="text" class="form-control" id="pickup" placeholder="Bijv. Amsterdam, Keizersgracht 123" required>
-          </div>
-          <div class="mb-3">
-            <label for="delivery" class="form-label">Bezorgadres</label>
-            <input type="text" class="form-control" id="delivery" placeholder="Bijv. Rotterdam, Coolsingel 45" required>
-          </div>
-          <div class="mb-3">
-            <label for="vehicle" class="form-label">Voertuigtype</label>
-            <select class="form-select" id="vehicle" required>
-              <option value="">Kies een voertuig</option>
-              <option value="auto">🚗 Personenauto</option>
-              <option value="bestelauto">🚐 Bestelauto</option>
-              <option value="bus">🚛 Bestelbus</option>
-            </select>
-          </div>
-  
-        <div class="mb-3">
-            <label for="name" class="form-label">Naam</label>
-            <input type="text" class="form-control" id="name" placeholder="Bijv. Yafet" required />
-        </div>
+    <form id="bookingForm" class="text-start bg-light p-4 rounded shadow-sm">
+      <h4 class="mb-3">Boek direct jouw zending</h4>
 
-  <!-- ✅ Nieuw: E-mailadres -->
-  <div class="mb-3">
-    <label for="email" class="form-label">E-mailadres</label>
-    <input type="email" class="form-control" id="email" placeholder="jouw@email.nl" required />
-  </div>
-          <div class="mb-3">
-            <label for="datetime" class="form-label">Ophaalmoment</label>
-            <input type="datetime-local" class="form-control" id="datetime" required>
-          </div>
-          <div class="mb-3">
-            <label for="notes" class="form-label">Opmerkingen</label>
-            <textarea class="form-control" id="notes" rows="3" placeholder="Bijv. bel aan bij achterdeur"></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Geschatte prijs</label>
-            <p id="priceEstimate" class="fw-bold text-success">€0,00</p>
-          </div>
-          <button type="submit" class="btn btn-success w-100">Verstuur aanvraag</button>
-        </form>
+      <div class="mb-3">
+        <label for="pickup" class="form-label">Ophaaladres</label>
+        <input type="text" class="form-control" id="pickup" required />
       </div>
+
+      <div class="mb-3">
+        <label for="delivery" class="form-label">Bezorgadres</label>
+        <input type="text" class="form-control" id="delivery" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="vehicle" class="form-label">Voertuigtype</label>
+        <select class="form-select" id="vehicle" required>
+          <option value="">Kies een voertuig</option>
+          <option value="auto">🚗 Personenauto</option>
+          <option value="bestelauto">🚐 Bestelauto</option>
+          <option value="bus">🚛 Bestelbus</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="name" class="form-label">Naam</label>
+        <input type="text" class="form-control" id="name" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mailadres</label>
+        <input type="email" class="form-control" id="email" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="datetime" class="form-label">Ophaalmoment</label>
+        <input type="datetime-local" class="form-control" id="datetime" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="notes" class="form-label">Opmerkingen</label>
+        <textarea class="form-control" id="notes" rows="3"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Geschatte prijs</label>
+        <p id="priceEstimate" class="fw-bold text-success">€0,00</p>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100">Verstuur aanvraag</button>
+    </form>
+  </div>
     </div>
   </div>
 </section>
@@ -718,7 +731,6 @@
     <script src="vendors/@popperjs/popper.min.js"></script>
     <script src="vendors/bootstrap/bootstrap.min.js"></script>
     <script src="vendors/is/is.min.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
     <script src="vendors/fontawesome/all.min.js"></script>
     <script src="assets/js/theme.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
