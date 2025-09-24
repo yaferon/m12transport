@@ -12,7 +12,7 @@ function debounce(fn, delay = 400) {
 
 // Geocode een adres naar { lat, lng }
 async function geocodeAddress(address) {
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_API_KEY}`;
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE}`;
 
   try {
     const resp = await fetch(url);
