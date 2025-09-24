@@ -29,14 +29,16 @@
     <!--    Stylesheets-->
     <!-- ===============================================-->
     <link href="assets/css/theme.css" rel="stylesheet" />
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+
+      <!-- EmailJS SDK -->
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      emailjs.init("AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE"); // 🔑 Vervang met je echte public key
+      emailjs.init("AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE"); // 🔑 vervang met je EmailJS public key
     });
   </script>
 
-  <!-- Google Maps API -->
+  <!-- Google Maps API (met Places voor adres suggestie) -->
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE&libraries=places"
     async
@@ -44,9 +46,17 @@
   ></script>
 
   <!-- booking.js -->
-  <script src="vendors/booking/booking.js" defer></script>
+  <script src="js/booking.js" defer></script>
 
-
+  <style>
+    body { font-family: sans-serif; background: #f8f9fa; padding: 2rem; }
+    form { max-width: 600px; margin: auto; background: white; padding: 2rem;
+           border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .form-label { font-weight: bold; margin-top: 1rem; display: block; }
+    .btn { background-color: #28a745; color: white; border: none; padding: 0.75rem;
+           width: 100%; font-size: 1rem; border-radius: 4px; cursor: pointer; margin-top: 1rem; }
+    .btn:hover { background-color: #218838; }
+  </style>
 
   </head>
 
@@ -90,56 +100,39 @@
         <img class="pt-7 pt-md-0 w-100" src="assets/img/illustrations/hero.png" alt="hero-header" />
       </div>
       <div class="col-12 col-md-7 col-xl-6 col-xxl-5 text-md-start text-center py-8">
-    <form id="bookingForm" class="text-start bg-light p-4 rounded shadow-sm">
-      <h4 class="mb-3">Boek direct jouw zending</h4>
+    <form id="bookingForm">
+    <h2>Boek jouw zending</h2>
 
-      <div class="mb-3">
-        <label for="pickup" class="form-label">Ophaaladres</label>
-        <input type="text" class="form-control" id="pickup" required />
-      </div>
+    <label for="pickup" class="form-label">Ophaaladres</label>
+    <input type="text" id="pickup" required />
 
-      <div class="mb-3">
-        <label for="delivery" class="form-label">Bezorgadres</label>
-        <input type="text" class="form-control" id="delivery" required />
-      </div>
+    <label for="delivery" class="form-label">Bezorgadres</label>
+    <input type="text" id="delivery" required />
 
-      <div class="mb-3">
-        <label for="vehicle" class="form-label">Voertuigtype</label>
-        <select class="form-select" id="vehicle" required>
-          <option value="">Kies een voertuig</option>
-          <option value="auto">🚗 Personenauto</option>
-          <option value="bestelauto">🚐 Bestelauto</option>
-          <option value="bus">🚛 Bestelbus</option>
-        </select>
-      </div>
+    <label for="vehicle" class="form-label">Voertuigtype</label>
+    <select id="vehicle" required>
+      <option value="">Kies een voertuig</option>
+      <option value="auto">🚗 Personenauto</option>
+      <option value="bestelauto">🚐 Bestelauto</option>
+      <option value="bus">🚛 Bestelbus</option>
+    </select>
 
-      <div class="mb-3">
-        <label for="name" class="form-label">Naam</label>
-        <input type="text" class="form-control" id="name" required />
-      </div>
+    <label for="name" class="form-label">Naam</label>
+    <input type="text" id="name" required />
 
-      <div class="mb-3">
-        <label for="email" class="form-label">E-mailadres</label>
-        <input type="email" class="form-control" id="email" required />
-      </div>
+    <label for="email" class="form-label">E-mailadres</label>
+    <input type="email" id="email" required />
 
-      <div class="mb-3">
-        <label for="datetime" class="form-label">Ophaalmoment</label>
-        <input type="datetime-local" class="form-control" id="datetime" required />
-      </div>
+    <label for="datetime" class="form-label">Ophaalmoment</label>
+    <input type="datetime-local" id="datetime" required />
 
-      <div class="mb-3">
-        <label for="notes" class="form-label">Opmerkingen</label>
-        <textarea class="form-control" id="notes" rows="3"></textarea>
-      </div>
+    <label for="notes" class="form-label">Opmerkingen</label>
+    <textarea id="notes" rows="3"></textarea>
 
-      <div class="mb-3">
-        <label class="form-label">Geschatte prijs</label>
-        <p id="priceEstimate" class="fw-bold text-success">€0,00</p>
-      </div>
+    <p><strong>Geschatte prijs:</strong> <span id="priceEstimate">€0,00</span></p>
 
-      <button type="submit" class="btn btn-success w-100">Verstuur aanvraag</button>
-    </form>
+    <button type="submit" class="btn">Verstuur aanvraag</button>
+  </form>
   </div>
     </div>
   </div>
