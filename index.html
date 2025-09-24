@@ -34,13 +34,14 @@
   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      emailjs.init("AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE"); // 🔑 vervang met je EmailJS public key
+      // Vervang met je echte EmailJS public key (bv. "wXyZ123AbcDEF")
+      emailjs.init("GnwJPNNGxqtGg9Xx_");
     });
   </script>
 
-  <!-- Google Maps API (met Places voor adres suggestie) -->
+  <!-- Google Maps JS API (v=beta nodig voor PlaceAutocompleteElement) -->
   <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE&libraries=places"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE&libraries=places&v=beta"
     async
     defer
   ></script>
@@ -49,15 +50,16 @@
   <script src="js/booking.js" defer></script>
 
   <style>
-    body { font-family: sans-serif; background: #f8f9fa; padding: 2rem; }
-    form { max-width: 600px; margin: auto; background: white; padding: 2rem;
-           border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    .form-label { font-weight: bold; margin-top: 1rem; display: block; }
-    .btn { background-color: #28a745; color: white; border: none; padding: 0.75rem;
-           width: 100%; font-size: 1rem; border-radius: 4px; cursor: pointer; margin-top: 1rem; }
-    .btn:hover { background-color: #218838; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; background: #f8f9fa; padding: 2rem; }
+    form { max-width: 640px; margin: auto; background: #fff; padding: 1.5rem 1.75rem; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    h2 { margin: 0 0 1rem; }
+    .form-label { font-weight: 600; margin-top: 1rem; display: block; }
+    input, select, textarea { width: 100%; padding: 0.7rem; border: 1px solid #d0d7de; border-radius: 6px; font-size: 1rem; }
+    .btn { background: #1d9b31; color: #fff; border: none; padding: 0.8rem; width: 100%; font-size: 1rem; border-radius: 6px; cursor: pointer; margin-top: 1rem; }
+    .btn:hover { background: #177d27; }
+    .hint { color: #6b7280; font-size: 0.9rem; margin-top: 0.5rem; }
+    .price { font-weight: 600; }
   </style>
-
   </head>
 
 
@@ -103,11 +105,13 @@
     <form id="bookingForm">
     <h2>Boek jouw zending</h2>
 
+    <!-- Adres suggestie: standaard inputs met JS-gedreven PlaceAutocompleteElement -->
     <label for="pickup" class="form-label">Ophaaladres</label>
-    <input type="text" id="pickup" required />
+    <input type="text" id="pickup" placeholder="Bijv. Damrak 1, Amsterdam" required />
+    <div class="hint">Typ en kies een suggestie. Bij storing valideren we het adres automatisch.</div>
 
     <label for="delivery" class="form-label">Bezorgadres</label>
-    <input type="text" id="delivery" required />
+    <input type="text" id="delivery" placeholder="Bijv. Coolsingel 10, Rotterdam" required />
 
     <label for="vehicle" class="form-label">Voertuigtype</label>
     <select id="vehicle" required>
@@ -127,9 +131,9 @@
     <input type="datetime-local" id="datetime" required />
 
     <label for="notes" class="form-label">Opmerkingen</label>
-    <textarea id="notes" rows="3"></textarea>
+    <textarea id="notes" rows="3" placeholder="Optioneel"></textarea>
 
-    <p><strong>Geschatte prijs:</strong> <span id="priceEstimate">€0,00</span></p>
+    <p><span class="price">Geschatte prijs:</span> <span id="priceEstimate">€0,00</span></p>
 
     <button type="submit" class="btn">Verstuur aanvraag</button>
   </form>
