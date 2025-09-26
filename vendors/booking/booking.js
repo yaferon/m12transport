@@ -11,13 +11,16 @@ function debounce(fn, delay = 400) {
 }
 
 // Geocode een adres naar { lat, lng }
+const GOOGLE_API_KEY = "AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE"; // zet hier geen production key in de repo
+
 async function geocodeAddress(address) {
+  if (!address) return null;
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${AIzaSyBjLIsXQhnnnTTD-4Ps1CLr-H-ayZqxmoE}`;
 
   try {
     const resp = await fetch(url);
     const data = await resp.json();
-    if (data.status === "OK" && data.results[0]?.geometry?.location) {
+    if (data.status === "OK" && data.results[0] && data.results[0].geometry && data.results[0].geometry.location) {
       return data.results[0].geometry.location;
     }
     console.warn("Geocoding status:", data.status, data.error_message || "");
